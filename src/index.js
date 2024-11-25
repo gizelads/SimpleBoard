@@ -3,11 +3,14 @@ import {
 } from 'rxjs'
 import {
   map,
-  mergeAll
+  mergeAll,
+  takeUntil
 } from 'rxjs/operators'
 
 const canvas = document.getElementById('reactive-canvas');
 const canvasContext = canvas.getContext('2d');
+canvasContext.lineJoin = 'round';
+canvasContext.lineCap = 'round';
 canvasContext.strokeStyle = 'white';
 canvasContext.lineWidth = '5';
 const restartButton = document.getElementById('restart-button');
@@ -27,8 +30,8 @@ const paintStroke = (event) => {
 };
 
 const onMouseDown$ = fromEvent(canvas, 'mousedown');
-const onMouseMove$ = fromEvent(canvas, 'mousemove');
 const onMouseUp$ = fromEvent(canvas, 'mouseup');
+const onMouseMove$ = fromEvent(canvas, 'mousemove').pipe(takeUntil(onMouseUp$));
 const startPaint$ = onMouseDown$.pipe(
   map(() => onMouseMove$),
   mergeAll()
