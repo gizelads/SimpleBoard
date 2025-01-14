@@ -21,6 +21,9 @@ const updateCursorPosition = (event) => {
   cursorPosition.y = event.clientY - canvas.offsetTop;
 };
 const paintStroke = (event) => {
+  const isRightClick = event.buttons === 2;
+  if (isRightClick) return;
+
   canvasContext.beginPath();
   canvasContext.moveTo(cursorPosition.x, cursorPosition.y);
   updateCursorPosition(event);
