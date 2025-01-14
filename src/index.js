@@ -1,5 +1,6 @@
 import {
-  fromEvent
+  fromEvent,
+  merge
 } from 'rxjs'
 import {
   map,
@@ -31,6 +32,9 @@ const paintStroke = (event) => {
   canvasContext.stroke();
   canvasContext.closePath();
 };
+const cleanWhiteboard = () => {
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+};
 
 const onMouseDown$ = fromEvent(canvas, 'mousedown');
 const onMouseUp$ = fromEvent(canvas, 'mouseup');
@@ -39,6 +43,10 @@ const startPaint$ = onMouseDown$.pipe(
   map(() => onMouseMove$),
   mergeAll()
 );
+const onLoadWindow$ = fromEvent(window, 'load');
+const onRestartClick$ = fromEvent(restartButton, 'click');
+const restartWhiteboard$ = merge(onLoadWindow$, onRestartClick$);
 
 onMouseDown$.subscribe(updateCursorPosition);
 startPaint$.subscribe(paintStroke);
+restartWhiteboard$.subscribe(cleanWhiteboard);
